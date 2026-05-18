@@ -1,0 +1,6 @@
+{
+  "name": "Satyam Verma Portfolio",
+  "description": "A premium, futuristic, AI-powered personal portfolio website for Satyam Verma — a Digital Creator, AI Website Developer, and Cyber Cafe Digital Service Provider. Features a futuristic neon dark theme.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
