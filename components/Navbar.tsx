@@ -42,26 +42,17 @@ export function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          <Link href="#home" className="flex items-center space-x-2 group md:w-1/4">
-            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/50 group-hover:scale-105 transition-transform">
+          <Link href="#home" className="flex items-center space-x-3 group shrink-0">
+            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/50 group-hover:scale-105 transition-transform shrink-0">
               <img src="/profile.png" alt="Satyam Verma" className="w-full h-full object-cover" />
             </div>
-          </Link>
-
-          {/* Absolute Center Logo */}
-          <Link href="#home" className="absolute left-1/2 -translate-x-1/2 hidden md:flex items-center justify-center">
-            <span className="font-heading font-black text-3xl tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-r from-primary via-cyan-400 to-purple-500 drop-shadow-md">
+            <span className="font-heading font-black text-lg sm:text-xl lg:text-2xl tracking-[0.05em] sm:tracking-[0.1em] text-transparent bg-clip-text bg-gradient-to-r from-primary via-cyan-400 to-purple-500 drop-shadow-md whitespace-nowrap">
               SATYAM VERMA
             </span>
           </Link>
 
-          {/* Mobile Text */}
-          <span className="font-heading font-black text-xl tracking-[0.1em] text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500 md:hidden ml-4">
-            SATYAM VERMA
-          </span>
-
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center justify-end space-x-8 md:w-full">
+          <div className="hidden md:flex items-center justify-end space-x-4 lg:space-x-6 xl:space-x-8 md:w-auto ml-auto">
             {links.map((link) => (
                <Link
                  key={link.name}
