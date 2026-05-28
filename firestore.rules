@@ -1,0 +1,120 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global Safety Net (First block catches all unhandled paths)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+    
+    // Reusable global helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isSignedIn() 
+        && request.auth.token.email == "satyammasterofai@gmail.com"
+        && request.auth.token.email_verified == true;
+    }
+    
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+    
+    function incoming() {
+      return request.resource.data;
+    }
+    
+    function existing() {
+      return resource.data;
+    }
+    
+    // Validation Blueprints
+    function isValidPortfolioItem(data) {
+      return data.keys().hasAll(['title', 'category', 'link', 'createdAt'])
+        && data.keys().size() == 4
+        && data.title is string && data.title.size() > 0 && data.title.size() <= 100
+        && data.category is string && data.category.size() > 0 && data.category.size() <= 50
+        && data.link is string && data.link.size() > 0 && data.link.size() <= 500
+        && data.createdAt is string && data.createdAt.size() > 0 && data.createdAt.size() <= 100;
+    }
+
+    function isValidContactMessage(data) {
+      return data.keys().hasAll(['name', 'emailOrPhone', 'service', 'message', 'createdAt'])
+        && data.keys().size() == 5
+        && data.name is string && data.name.size() > 0 && data.name.size() <= 100
+        && data.emailOrPhone is string && data.emailOrPhone.size() > 0 && data.emailOrPhone.size() <= 150
+        && data.service is string && data.service.size() > 0 && data.service.size() <= 100
+        && data.message is string && data.message.size() > 0 && data.message.size() <= 2000
+        && data.createdAt is string && data.createdAt.size() > 0 && data.createdAt.size() <= 100;
+    }
+
+    function isValidCustomService(data) {
+      return data.keys().hasAll(['title', 'desc', 'category', 'benefit', 'createdAt'])
+        && (data.keys().size() == 5 || (data.keys().size() == 6 && data.keys().hasAll(['badge'])))
+        && data.title is string && data.title.size() > 0 && data.title.size() <= 100
+        && data.desc is string && data.desc.size() > 0 && data.desc.size() <= 1000
+        && data.category is string && data.category.size() > 0 && data.category.size() <= 100
+        && (!data.keys().hasAll(['badge']) || (data.badge is string && data.badge.size() <= 50))
+        && data.benefit is string && data.benefit.size() > 0 && data.benefit.size() <= 100
+        && data.createdAt is string && data.createdAt.size() > 0 && data.createdAt.size() <= 100;
+    }
+
+    function isValidCustomFAQ(data) {
+      return data.keys().hasAll(['question', 'answer', 'createdAt'])
+        && data.keys().size() == 3
+        && data.question is string && data.question.size() > 0 && data.question.size() <= 500
+        && data.answer is string && data.answer.size() > 0 && data.answer.size() <= 2000
+        && data.createdAt is string && data.createdAt.size() > 0 && data.createdAt.size() <= 100;
+    }
+
+    function isValidCustomPricing(data) {
+      return data.keys().hasAll(['name', 'desc', 'price', 'duration', 'features', 'popular', 'createdAt'])
+        && data.keys().size() == 7
+        && data.name is string && data.name.size() > 0 && data.name.size() <= 100
+        && data.desc is string && data.desc.size() > 0 && data.desc.size() <= 500
+        && data.price is string && data.price.size() > 0 && data.price.size() <= 50
+        && data.duration is string && data.duration.size() > 0 && data.duration.size() <= 50
+        && data.features is string && data.features.size() > 0 && data.features.size() <= 2000
+        && data.popular is bool
+        && data.createdAt is string && data.createdAt.size() > 0 && data.createdAt.size() <= 100;
+    }
+    
+    // Match Blocks for each collection
+    match /portfolio/{itemId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidId(itemId) && isValidPortfolioItem(incoming());
+      allow update: if isAdmin() && isValidId(itemId) && isValidPortfolioItem(incoming());
+      allow delete: if isAdmin() && isValidId(itemId);
+    }
+
+    match /contact_messages/{messageId} {
+      // Admin can list/get messages. Anyone can submit (create).
+      allow read, delete: if isAdmin() && isValidId(messageId);
+      allow create: if isValidId(messageId) && isValidContactMessage(incoming());
+      allow update: if false; // Messages are immutable
+    }
+
+    match /custom_services/{serviceId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidId(serviceId) && isValidCustomService(incoming());
+      allow update: if isAdmin() && isValidId(serviceId) && isValidCustomService(incoming());
+      allow delete: if isAdmin() && isValidId(serviceId);
+    }
+
+    match /custom_faqs/{faqId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidId(faqId) && isValidCustomFAQ(incoming());
+      allow update: if isAdmin() && isValidId(faqId) && isValidCustomFAQ(incoming());
+      allow delete: if isAdmin() && isValidId(faqId);
+    }
+
+    match /custom_pricing/{pricingId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidId(pricingId) && isValidCustomPricing(incoming());
+      allow update: if isAdmin() && isValidId(pricingId) && isValidCustomPricing(incoming());
+      allow delete: if isAdmin() && isValidId(pricingId);
+    }
+  }
+}

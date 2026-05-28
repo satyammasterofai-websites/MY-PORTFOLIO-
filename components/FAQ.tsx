@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 const faqs = [
   {
@@ -40,6 +42,24 @@ const faqs = [
 
 export function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [customFaqs, setCustomFaqs] = useState<any[]>([]);
+
+  useEffect(() => {
+    const q = query(collection(db, "custom_faqs"), orderBy("createdAt", "desc"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const parsed = snapshot.docs.map(doc => ({
+        id: doc.id,
+        isCustom: true,
+        ...doc.data()
+      }));
+      setCustomFaqs(parsed);
+    }, (error) => {
+      console.warn("Could not fetch custom FAQs:", error);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const allFaqs = [...customFaqs, ...faqs];
 
   return (
     <section className="py-24 relative">
@@ -54,11 +74,11 @@ export function FAQ() {
         </div>
 
         <div className="space-y-4">
-          {faqs.map((faq, idx) => {
+          {allFaqs.map((faq, idx) => {
             const isOpen = openIndex === idx;
             return (
               <motion.div
-                key={idx}
+                key={faq.id || faq.question || idx}
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}

@@ -7,6 +7,7 @@ import {
   Twitter,
 } from "lucide-react";
 
+
 export function Footer() {
   return (
     <footer className="relative bg-[#050505] pt-20 pb-10 border-t border-white/5">
@@ -18,7 +19,7 @@ export function Footer() {
               className="flex items-center space-x-2 group mb-6 inline-flex"
             >
               <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/50 group-hover:scale-105 transition-transform">
-                <img src="/profile.png" alt="Satyam Verma" className="w-full h-full object-cover" />
+                <img src="/profile.jpg" alt="Satyam Verma" className="w-full h-full object-cover" />
               </div>
               <span className="font-heading font-bold text-xl tracking-tighter text-white">
                 Satyam<span className="text-gradient">.verma</span>

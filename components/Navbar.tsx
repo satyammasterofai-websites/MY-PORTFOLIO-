@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Menu, X, UserCircle, LogOut } from "lucide-react";
 import Link from "next/link";
+
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
 
@@ -19,7 +20,7 @@ const links = [
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const { user, login, logout } = useAuth();
+  const { user, isAdmin, login, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -44,7 +45,7 @@ export function Navbar() {
         <div className="flex items-center justify-between h-20">
           <Link href="#home" className="flex items-center space-x-3 group shrink-0">
             <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/50 group-hover:scale-105 transition-transform shrink-0">
-              <img src="/profile.png" alt="Satyam Verma" className="w-full h-full object-cover" />
+              <img src="/profile.jpg" alt="Satyam Verma" className="w-full h-full object-cover" />
             </div>
             <span className="font-heading font-black text-lg sm:text-xl lg:text-2xl tracking-[0.05em] sm:tracking-[0.1em] text-transparent bg-clip-text bg-gradient-to-r from-primary via-cyan-400 to-purple-500 drop-shadow-md whitespace-nowrap">
               SATYAM VERMA
@@ -63,6 +64,18 @@ export function Navbar() {
                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
                </Link>
             ))}
+            {isAdmin && (
+              <Link 
+                href="/admin" 
+                className="px-4 py-2 bg-primary/10 hover:bg-primary/20 border border-primary/25 text-primary rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all outline-none"
+              >
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                </span>
+                Admin Panel
+              </Link>
+            )}
             <Link
               href="#contact"
               className="px-5 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-full font-semibold shadow-lg shadow-primary/20 active:scale-95 transition-all hover:brightness-110"
@@ -70,11 +83,11 @@ export function Navbar() {
               Hire Me
             </Link>
             {user ? (
-               <button onClick={logout} className="text-white/70 hover:text-white transition-colors p-2" title="Sign out">
+               <button onClick={() => logout()} className="text-white/70 hover:text-white transition-colors p-2" title="Sign out">
                  <LogOut className="w-5 h-5" />
                </button>
             ) : (
-               <button onClick={login} className="text-white/70 hover:text-white transition-colors p-2" title="Sign in as Admin">
+               <button onClick={() => login()} className="text-white/70 hover:text-white transition-colors p-2" title="Sign in as Admin">
                  <UserCircle className="w-5 h-5" />
                </button>
             )}
@@ -83,11 +96,11 @@ export function Navbar() {
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center space-x-2">
             {user ? (
-               <button onClick={logout} className="text-white/70 hover:text-white transition-colors p-2" title="Sign out">
+               <button onClick={() => logout()} className="text-white/70 hover:text-white transition-colors p-2" title="Sign out">
                  <LogOut className="w-5 h-5" />
                </button>
             ) : (
-               <button onClick={login} className="text-white/70 hover:text-white transition-colors p-2" title="Sign in as Admin">
+               <button onClick={() => login()} className="text-white/70 hover:text-white transition-colors p-2" title="Sign in as Admin">
                  <UserCircle className="w-5 h-5" />
                </button>
             )}
@@ -125,6 +138,15 @@ export function Navbar() {
                   {link.name}
                 </Link>
               ))}
+              {isAdmin && (
+                <Link
+                  href="/admin"
+                  onClick={() => setIsOpen(false)}
+                  className="inline-flex items-center justify-center px-5 py-3 rounded-xl bg-primary/10 border border-primary/25 text-primary font-semibold mt-2"
+                >
+                  Admin dashboard
+                </Link>
+              )}
               <Link
                 href="#contact"
                 onClick={() => setIsOpen(false)}

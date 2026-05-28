@@ -1,0 +1,167 @@
+{
+  "entities": {
+    "PortfolioItem": {
+      "title": "PortfolioItem",
+      "description": "A showcase project in the digital creator's portfolio",
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Title of the project"
+        },
+        "category": {
+          "type": "string",
+          "description": "Category of project (e.g., Websites, Posters, Video editing, INVITATIONS CARDS, AI Art)"
+        },
+        "link": {
+          "type": "string",
+          "format": "uri",
+          "description": "Project URL"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO 8601 string representing project creation timestamp"
+        }
+      },
+      "required": ["title", "category", "link", "createdAt"]
+    },
+    "ContactMessage": {
+      "title": "ContactMessage",
+      "description": "An inquiry message from a visitor",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Visitor name"
+        },
+        "emailOrPhone": {
+          "type": "string",
+          "description": "Contact email or phone number"
+        },
+        "service": {
+          "type": "string",
+          "description": "Inquired service category"
+        },
+        "message": {
+          "type": "string",
+          "description": "Detailed project brief or message"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO 8601 string representing submission timestamp"
+        }
+      },
+      "required": ["name", "emailOrPhone", "service", "message", "createdAt"]
+    },
+    "CustomService": {
+      "title": "CustomService",
+      "description": "A dynamic service offering managed by the admin",
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Service title"
+        },
+        "desc": {
+          "type": "string",
+          "description": "Service description"
+        },
+        "category": {
+          "type": "string",
+          "description": "Service category (e.g., AI Services, Design Services, Video Services, Cyber Cafe Services)"
+        },
+        "badge": {
+          "type": "string",
+          "description": "Optional badge (e.g., Popular, New, Trending)"
+        },
+        "benefit": {
+          "type": "string",
+          "description": "Key benefit or tag line"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO 8601 string representing item creation timestamp"
+        }
+      },
+      "required": ["title", "desc", "category", "benefit", "createdAt"]
+    },
+    "CustomFAQ": {
+      "title": "CustomFAQ",
+      "description": "A frequently asked question managed by the admin",
+      "type": "object",
+      "properties": {
+        "question": {
+          "type": "string",
+          "description": "FAQ question text"
+        },
+        "answer": {
+          "type": "string",
+          "description": "FAQ answer text"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO 8601 string representing item creation timestamp"
+        }
+      },
+      "required": ["question", "answer", "createdAt"]
+    },
+    "CustomPricing": {
+      "title": "CustomPricing",
+      "description": "A pricing plan managed by the admin",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Plan name"
+        },
+        "desc": {
+          "type": "string",
+          "description": "Plan description"
+        },
+        "price": {
+          "type": "string",
+          "description": "Display price (e.g., ₹4,999)"
+        },
+        "duration": {
+          "type": "string",
+          "description": "Price duration (e.g., /project, /month)"
+        },
+        "features": {
+          "type": "string",
+          "description": "Comma-separated list of features"
+        },
+        "popular": {
+          "type": "boolean",
+          "description": "Is this a highlighted popular plan"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO 8601 string representing item creation timestamp"
+        }
+      },
+      "required": ["name", "desc", "price", "duration", "features", "popular", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/portfolio/{itemId}": {
+      "schema": "PortfolioItem",
+      "description": "Collection of portfolio showcase projects"
+    },
+    "/contact_messages/{messageId}": {
+      "schema": "ContactMessage",
+      "description": "Collection of inquiries received through the contact form"
+    },
+    "/custom_services/{serviceId}": {
+      "schema": "CustomService",
+      "description": "Collection of dynamic service offerings managed by the admin"
+    },
+    "/custom_faqs/{faqId}": {
+      "schema": "CustomFAQ",
+      "description": "Collection of dynamic FAQs managed by the admin"
+    },
+    "/custom_pricing/{pricingId}": {
+      "schema": "CustomPricing",
+      "description": "Collection of dynamic pricing plans managed by the admin"
+    }
+  }
+}

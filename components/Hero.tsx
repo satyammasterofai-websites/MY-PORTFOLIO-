@@ -5,6 +5,7 @@ import { Bot, Code2, MonitorPlay, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+
 const roles = [
   "Website Developer",
   "AI Creator",
@@ -60,11 +61,7 @@ export function Hero() {
 
           <div className="space-y-6 flex flex-col items-center w-full">
             <div className="relative w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 rounded-full overflow-hidden border-4 border-white/10 neon-glow shadow-2xl">
-              <img 
-                src="/profile.png" 
-                alt="Satyam Verma" 
-                className="w-full h-full object-cover"
-              />
+              <img src="/profile.jpg" alt="Satyam Verma" className="w-full h-full object-cover" />
             </div>
             
             <span className="text-2xl md:text-3xl font-heading font-bold tracking-widest uppercase text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-primary to-purple-500 drop-shadow-[0_0_15px_rgba(6,182,212,0.5)]">

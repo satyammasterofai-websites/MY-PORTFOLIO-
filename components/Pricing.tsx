@@ -1,9 +1,12 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Check, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 const plans = [
   {
@@ -54,6 +57,34 @@ const plans = [
 ];
 
 export function Pricing() {
+  const [customPlans, setCustomPlans] = useState<any[]>([]);
+
+  useEffect(() => {
+    const q = query(collection(db, "custom_pricing"), orderBy("createdAt", "desc"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const parsed = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          name: data.name,
+          desc: data.desc,
+          price: data.price,
+          duration: data.duration,
+          features: typeof data.features === "string" ? data.features.split(",") : data.features,
+          popular: data.popular || false,
+          color: data.popular ? "border-primary" : "border-white/10",
+          isCustom: true
+        };
+      });
+      setCustomPlans(parsed);
+    }, (error) => {
+      console.warn("Could not fetch custom pricing plans:", error);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const allPlans = [...customPlans, ...plans];
+
   return (
     <section id="pricing" className="py-24 relative bg-black/50">
       <div className="absolute inset-x-0 h-px top-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
@@ -69,9 +100,9 @@ export function Pricing() {
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {plans.map((plan, idx) => (
+          {allPlans.map((plan, idx) => (
             <motion.div
-              key={idx}
+              key={plan.id || plan.name || idx}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -103,7 +134,7 @@ export function Pricing() {
               </div>
 
               <ul className="space-y-4 mb-8 flex-1">
-                {plan.features.map((feat, i) => (
+                {plan.features.map((feat: string, i: number) => (
                   <li
                     key={i}
                     className="flex items-start text-sm text-white/80"

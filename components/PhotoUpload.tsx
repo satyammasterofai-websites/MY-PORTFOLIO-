@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { collection, addDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { db, handleFirestoreError, OperationType } from "@/lib/firebase";
 import { Loader2, Link2, PlusCircle } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -35,6 +35,7 @@ export function PhotoUpload({ onUploadSuccess }: { onUploadSuccess: () => void }
       console.error("Error saving document:", error);
       setUploading(false);
       alert("Error saving document");
+      handleFirestoreError(error, OperationType.WRITE, "portfolio");
     }
   };
 

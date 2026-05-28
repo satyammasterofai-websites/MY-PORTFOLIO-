@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import {
   Globe,
   Smartphone,
@@ -193,10 +195,46 @@ const getCategoryTheme = (category: string) => {
   }
 };
 
+const IconMap: Record<string, any> = {
+  Globe,
+  Smartphone,
+  Palette,
+  Film,
+  Gift,
+  Megaphone,
+  Share2,
+  Bot,
+  Sparkles,
+  Wrench,
+  FileText,
+  Fingerprint,
+  FileBadge,
+  Printer,
+};
+
 export function Services() {
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [customServices, setCustomServices] = useState<any[]>([]);
 
-  const filteredServices = services.filter(
+  useEffect(() => {
+    const q = query(collection(db, "custom_services"), orderBy("createdAt", "desc"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const parsed = snapshot.docs.map(doc => ({
+        id: doc.id,
+        isCustom: true,
+        icon: "Sparkles", // Use flat string icon identifiers
+        ...doc.data()
+      }));
+      setCustomServices(parsed);
+    }, (error) => {
+      console.warn("Could not fetch custom services:", error);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const allServices = [...customServices, ...services];
+
+  const filteredServices = allServices.filter(
     (srv) => selectedCategory === "All" || srv.category === selectedCategory
   );
 
@@ -256,6 +294,7 @@ export function Services() {
           <AnimatePresence mode="popLayout">
             {filteredServices.map((service, idx) => {
               const theme = getCategoryTheme(service.category);
+              const IconComponent = typeof service.icon === "string" ? (IconMap[service.icon] || Sparkles) : (service.icon || Sparkles);
               return (
                 <motion.div
                   layout
@@ -263,7 +302,7 @@ export function Services() {
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: 10 }}
                   transition={{ duration: 0.3 }}
-                  key={service.title}
+                  key={service.id || service.title}
                   className={cn(
                     "group glass-card p-6 rounded-2xl cursor-pointer border border-white/5 bg-white/[0.02]",
                     "relative overflow-hidden transition-all duration-300 flex flex-col justify-between h-[300px]",
@@ -282,7 +321,7 @@ export function Services() {
                     {/* Header: Icon & optional Badge */}
                     <div className="flex items-start justify-between mb-5 relative z-10">
                       <div className={cn("p-3 rounded-xl transition-transform duration-300 group-hover:scale-110", theme.bg)}>
-                        <service.icon className={cn("w-6 h-6", theme.accent)} />
+                        <IconComponent className={cn("w-6 h-6", theme.accent)} />
                       </div>
                       {service.badge && (
                         <span className={cn(

@@ -3,6 +3,7 @@
 import { motion } from "motion/react";
 import { Download, TerminalSquare } from "lucide-react";
 
+
 const expertises = [
   "AI-powered website development",
   "Graphic designing",
@@ -36,12 +37,11 @@ export function About() {
           >
             <div className="relative aspect-square max-w-md mx-auto">
               <div className="absolute inset-0 bg-gradient-to-tr from-primary to-secondary rounded-3xl blur-2xl opacity-20"></div>
-              <div className="relative h-full w-full rounded-3xl overflow-hidden glass-card border border-white/10 flex items-center justify-center bg-black/50">
-                {/* Placeholder for Profile Image */}
-                <div className="text-center p-8">
-                  <TerminalSquare className="w-24 h-24 mx-auto text-primary/50 mb-4" />
-                  <p className="text-white/50 font-mono text-sm [writing-mode:vertical-rl] absolute -left-2 top-8 tracking-[0.2em]">
-                    SATYAM VERMA
+              <div className="relative h-full w-full rounded-3xl overflow-hidden glass-card border border-white/10 flex items-center justify-center bg-black/50 group">
+                <img src="/profile.jpg" alt="Satyam Verma" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10">
+                  <p className="text-xs font-mono text-white/90 tracking-widest uppercase">
+                    Satyam Verma
                   </p>
                 </div>
               </div>
@@ -120,10 +120,14 @@ export function About() {
             </div>
 
             <div className="pt-6">
-              <button className="flex items-center space-x-2 px-6 py-3 rounded-xl bg-white/5 border border-primary/30 text-white hover:bg-primary/20 transition-all font-medium group">
+              <a
+                href="/resume.pdf"
+                download="Satyam_Verma_Resume.pdf"
+                className="inline-flex items-center space-x-2 px-6 py-3 rounded-xl bg-white/5 border border-primary/30 text-white hover:bg-primary/20 transition-all font-medium group cursor-pointer"
+              >
                 <Download className="w-5 h-5 group-hover:-translate-y-1 transition-transform" />
                 <span>Download Resume</span>
-              </button>
+              </a>
             </div>
           </motion.div>
         </div>

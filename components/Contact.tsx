@@ -1,9 +1,52 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "motion/react";
-import { Phone, Mail, MapPin, MessageSquare, Send } from "lucide-react";
+import { Phone, Mail, MapPin, MessageSquare, Send, Loader2, CheckCircle2 } from "lucide-react";
+import { collection, addDoc } from "firebase/firestore";
+import { db, handleFirestoreError, OperationType } from "@/lib/firebase";
 
 export function Contact() {
+  const [name, setName] = useState("");
+  const [emailOrPhone, setEmailOrPhone] = useState("");
+  const [service, setService] = useState("AI Website Development");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim() || !emailOrPhone.trim() || !message.trim()) return;
+
+    setLoading(true);
+    setSuccess(false);
+
+    try {
+      await addDoc(collection(db, "contact_messages"), {
+        name,
+        emailOrPhone,
+        service,
+        message,
+        createdAt: new Date().toISOString()
+      });
+
+      setSuccess(true);
+      setName("");
+      setEmailOrPhone("");
+      setMessage("");
+      setService("AI Website Development");
+    } catch (error) {
+      console.error("Error submitting contact inquiry:", error);
+      try {
+        handleFirestoreError(error, OperationType.WRITE, "contact_messages");
+      } catch (err) {
+        alert("Could not deliver inquiry. Database permissions might be missing or insufficient.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <section
       id="contact"
@@ -105,18 +148,26 @@ export function Contact() {
             viewport={{ once: true }}
             className="glass-card p-8 rounded-3xl border border-white/10"
           >
-            <h3 className="text-2xl font-bold font-heading mb-6 text-white">
-              Send a Message
+            <h3 className="text-2xl font-bold font-heading mb-6 text-white flex items-center justify-between">
+              <span>Send a Message</span>
+              {success && (
+                <span className="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-1 rounded flex items-center gap-1 font-sans">
+                  <CheckCircle2 className="w-3 h-3" /> Sent!
+                </span>
+              )}
             </h3>
 
-            <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+            <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label className="block text-sm font-medium text-white/50 mb-2">
                   Your Name
                 </label>
                 <input
                   type="text"
-                  className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all font-sans"
                   placeholder="John Doe"
                 />
               </div>
@@ -126,7 +177,10 @@ export function Contact() {
                 </label>
                 <input
                   type="text"
-                  className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all"
+                  required
+                  value={emailOrPhone}
+                  onChange={(e) => setEmailOrPhone(e.target.value)}
+                  className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all font-sans"
                   placeholder="john@example.com / +91XXX"
                 />
               </div>
@@ -134,12 +188,16 @@ export function Contact() {
                 <label className="block text-sm font-medium text-white/50 mb-2">
                   Which service do you need?
                 </label>
-                <select className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white/70 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all appearance-none cursor-pointer">
-                  <option>AI Website Development</option>
-                  <option>Graphic Design & Posters</option>
-                  <option>Video Editing</option>
-                  <option>Local Cyber Cafe Service</option>
-                  <option>Other</option>
+                <select
+                  value={service}
+                  onChange={(e) => setService(e.target.value)}
+                  className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all cursor-pointer font-sans [&>option]:bg-[#0c0d12]"
+                >
+                  <option value="AI Website Development">AI Website Development</option>
+                  <option value="Graphic Design & Posters">Graphic Design & Posters</option>
+                  <option value="Video Editing">Video Editing</option>
+                  <option value="Local Cyber Cafe Service">Local Cyber Cafe Service</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
               <div>
@@ -148,14 +206,30 @@ export function Contact() {
                 </label>
                 <textarea
                   rows={4}
-                  className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all resize-none"
+                  required
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all resize-none font-sans"
                   placeholder="Tell me about your project..."
                 ></textarea>
               </div>
 
-              <button className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-primary to-secondary text-white font-bold py-4 rounded-xl hover:opacity-90 transition-opacity">
-                <span>Send Inquiry</span>
-                <Send className="w-4 h-4 ml-2" />
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-primary to-secondary text-white font-bold py-4 rounded-xl hover:opacity-90 transition-opacity active:scale-[0.98] transition-transform cursor-pointer disabled:opacity-50"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                    <span>Delivering...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Send Inquiry</span>
+                    <Send className="w-4 h-4 ml-2" />
+                  </>
+                )}
               </button>
             </form>
           </motion.div>

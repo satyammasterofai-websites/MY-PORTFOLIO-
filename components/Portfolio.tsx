@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { ExternalLink, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { collection, query, orderBy, onSnapshot, deleteDoc, doc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { db, handleFirestoreError, OperationType } from "@/lib/firebase";
 import { PhotoUpload } from "./PhotoUpload";
 import { useAuth } from "@/lib/auth";
 
@@ -96,6 +96,11 @@ export function Portfolio() {
       setProjects([...fbProjects, ...defaultProjects]);
     }, (error) => {
       console.warn("Could not fetch portfolio items. You might need to update Firebase indices or rules:", error);
+      try {
+        handleFirestoreError(error, OperationType.LIST, "portfolio");
+      } catch (err) {
+        console.error("Gracefully caught Firestore error:", err);
+      }
     });
 
     return () => unsubscribe();
@@ -107,6 +112,7 @@ export function Portfolio() {
       await deleteDoc(doc(db, "portfolio", id));
     } catch (error) {
       console.error("Error deleting project:", error);
+      handleFirestoreError(error, OperationType.DELETE, `portfolio/${id}`);
     }
   };
 
