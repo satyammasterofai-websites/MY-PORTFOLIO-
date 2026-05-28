@@ -14,8 +14,8 @@ const categories = [
   "Websites",
   "Posters",
   "Video editing",
+  "Promotional video editing",
   "INVITATIONS CARDS",
-  "AI Art",
 ];
 
 type Project = {
@@ -28,52 +28,10 @@ type Project = {
 
 const defaultProjects: Project[] = [
   {
-    id: "1",
-    title: "Modern School Website",
-    category: "Websites",
-    link: "https://example.com/school",
-  },
-  {
-    id: "2",
-    title: "IT Solutions Landing Page",
-    category: "Websites",
-    link: "https://example.com/it",
-  },
-  {
-    id: "3",
-    title: "Festival Marketing Poster",
-    category: "Posters",
-    link: "https://example.com/poster",
-  },
-  {
-    id: "4",
-    title: "Product Promo Video",
-    category: "Video editing",
-    link: "https://example.com/video",
-  },
-  {
-    id: "5",
-    title: "WhatsApp Business Catalog",
-    category: "INVITATIONS CARDS",
-    link: "https://example.com/catalog",
-  },
-  {
-    id: "6",
-    title: "Cyberpunk Cityscape",
-    category: "AI Art",
-    link: "https://example.com/art",
-  },
-  {
     id: "7",
-    title: "Restaurant Landing Page",
+    title: "HOTEL PRAKASH BLOCK-1 WEBSITE",
     category: "Websites",
-    link: "https://example.com/restaurant",
-  },
-  {
-    id: "8",
-    title: "Minimal Logo Concept",
-    category: "INVITATIONS CARDS",
-    link: "https://example.com/logo",
+    link: "https://sample-website-2-wheat.vercel.app",
   },
 ];
 
