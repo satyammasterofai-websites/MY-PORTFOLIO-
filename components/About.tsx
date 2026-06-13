@@ -131,7 +131,7 @@ export function About() {
 
             <div className="pt-6">
               <a
-                href="/resume.pdf"
+                href="public/resume.pdf"
                 download="Satyam_Verma_Resume.pdf"
                 className="inline-flex items-center space-x-2 px-6 py-3 rounded-xl bg-white/5 border border-primary/30 text-white hover:bg-primary/20 transition-all font-medium group cursor-pointer"
               >
